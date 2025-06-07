@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  economins-sam
+
+  Sample SAM Template for economins-sam
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Runtime: python3.13
+    Timeout: 10
+    CodeUri: reb/
+    Handler: app.lambda_handler
+    Environment:
+      Variables:
+        REB_API_KEY: {REB_API_KEY}
+        S3_BUCKET_NAME: economins
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
+Resources:
+  CollectAptPriceAll:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: collect-reb-apt-price-index-all
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Environment:
+        Variables:
+          CLS_ID: '500001'
+          S3_OUTPUT_KEY: data/apt-price-index-all.json
+          STATBL_ID: A_2024_00178
+
+  CollectAptPriceGreaterSeoul:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: collect-reb-apt-price-index-greater-seoul
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Environment:
+        Variables:
+          CLS_ID: '500002'
+          S3_OUTPUT_KEY: data/apt-price-index-greater-seoul.json
+          STATBL_ID: A_2024_00178
+
+  CollectAptPriceSeoul:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: collect-reb-apt-price-index-seoul
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Environment:
+        Variables:
+          CLS_ID: '500007'
+          S3_OUTPUT_KEY: data/apt-price-index-seoul.json
+          STATBL_ID: A_2024_00178
+
+  CollectAptVolumeAll:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: collect-reb-apt-volume-all
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Environment:
+        Variables:
+          CLS_ID: '500001'
+          S3_OUTPUT_KEY: data/apt-volume-all.json
+          STATBL_ID: A_2024_00178
+          GRP_ID: '900001'
+          ITM_ID: '100001'
+
+  CollectAptVolumeGreaterSeoul:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: collect-reb-apt-volume-greater-seoul
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Environment:
+        Variables:
+          CLS_ID: '500001'
+          S3_OUTPUT_KEY: data/apt-volume-kyeongki.json
+          STATBL_ID: A_2024_00178
+          GRP_ID: '900010'
+          ITM_ID: '100001'
+
+  CollectAptVolumeSeoul:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      FunctionName: collect-reb-apt-volume-seoul
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Environment:
+        Variables:
+          CLS_ID: '500001'
+          S3_OUTPUT_KEY: data/apt-volume-seoul.json
+          STATBL_ID: A_2024_00178
+          GRP_ID: '900002'
+          ITM_ID: '100001'
