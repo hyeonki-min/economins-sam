@@ -10,11 +10,10 @@ Globals:
   Function:
     Runtime: python3.13
     Timeout: 10
-    CodeUri: reb/
-    Handler: app.lambda_handler
     Environment:
       Variables:
         REB_API_KEY: {REB_API_KEY}
+        ECOS_API_KEY: {ECOS_API_KEY}
         S3_BUCKET_NAME: economins
     # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
@@ -25,6 +24,8 @@ Resources:
     Properties:
       FunctionName: collect-reb-apt-price-index-all
       Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: reb/
+      Handler: app.lambda_handler
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -36,6 +37,8 @@ Resources:
     Properties:
       FunctionName: collect-reb-apt-price-index-greater-seoul
       Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: reb/
+      Handler: app.lambda_handler
       Environment:
         Variables:
           CLS_ID: '500002'
@@ -47,6 +50,8 @@ Resources:
     Properties:
       FunctionName: collect-reb-apt-price-index-seoul
       Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: reb/
+      Handler: app.lambda_handler
       Environment:
         Variables:
           CLS_ID: '500007'
@@ -58,6 +63,8 @@ Resources:
     Properties:
       FunctionName: collect-reb-apt-volume-all
       Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: reb/
+      Handler: app.lambda_handler
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -71,6 +78,8 @@ Resources:
     Properties:
       FunctionName: collect-reb-apt-volume-greater-seoul
       Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: reb/
+      Handler: app.lambda_handler
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -84,6 +93,8 @@ Resources:
     Properties:
       FunctionName: collect-reb-apt-volume-seoul
       Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: reb/
+      Handler: app.lambda_handler
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -91,3 +102,199 @@ Resources:
           STATBL_ID: A_2024_00178
           GRP_ID: '900002'
           ITM_ID: '100001'
+
+  CollectBaseRateKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-base-rate-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/base-rate-korea.json
+          STAT_CODE: '722Y001'
+          CYCLE: 'M'
+          ITEM_CODE: '0101000'
+
+  CollectCorporateBondRateKorea3AA:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-corporate-bond-korea-3-aa
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/corporate-bond-korea-3-aa.json
+          STAT_CODE: '721Y001'
+          CYCLE: 'M'
+          ITEM_CODE: '5050000'
+
+  CollectTreasuryBondKorea3:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-treasury-bond-korea-3
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/treasury-bond-korea-3.json
+          STAT_CODE: '721Y001'
+          CYCLE: 'M'
+          ITEM_CODE: '5020000'
+
+  CollectTreasuryBondKorea10:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-treasury-bond-korea-10
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/treasury-bond-korea-10.json
+          STAT_CODE: '721Y001'
+          CYCLE: 'M'
+          ITEM_CODE: '5050000'
+
+  CollectMortgageLoanRateKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-mortgage-load-rate-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-mortgage-load-rate-korea.json
+          STAT_CODE: '121Y006'
+          CYCLE: 'M'
+          ITEM_CODE: 'BECBLA0302'
+
+  CollectHouseholdCreditsKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-household-credits-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-household-credits-korea.json
+          STAT_CODE: '151Y001'
+          CYCLE: 'Q'
+          ITEM_CODE: '1100000'
+
+  CollectCurrenctAccountBalanceKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-current-account-balance-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-current-account-balance-korea.json
+          STAT_CODE: '301Y017'
+          CYCLE: 'M'
+          ITEM_CODE: 'SA000'
+
+  CollectExchangeRateDollarKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-exchange-rate-dollar-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-exchange-rate-dollar-korea.json
+          STAT_CODE: '731Y004'
+          CYCLE: 'M'
+          ITEM_CODE: '0000001'
+
+  CollectM2Korea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-m2-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-m2-korea.json
+          STAT_CODE: '101Y003'
+          CYCLE: 'M'
+          ITEM_CODE: 'BBHS00'
+
+  CollectCPIKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-cpi-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-cpi-korea.json
+          STAT_CODE: '901Y009'
+          CYCLE: 'M'
+          ITEM_CODE: '0'
+
+  CollectPPIKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-ppi-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-ppi-korea.json
+          STAT_CODE: '404Y014'
+          CYCLE: 'M'
+          ITEM_CODE: '*AA'
+
+  CollectRealGDPKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-real-gdp-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-real-gdp-korea.json
+          STAT_CODE: '200Y104'
+          CYCLE: 'Q'
+          ITEM_CODE: '1400'
+
+  CollectUnemploymentRateKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-unemployment-rate-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-unemployment-rate-korea.json
+          STAT_CODE: '901Y027'
+          CYCLE: 'M'
+          ITEM_CODE: 'I61BC'
+
+  CollectForeignExchangeReservesKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-foreign-exchange-reserves-korea
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/ecos-foreign-exchange-reserves-korea.json
+          STAT_CODE: '732Y001'
+          CYCLE: 'M'
+          ITEM_CODE: '99'
