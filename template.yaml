@@ -31,6 +31,13 @@ Resources:
           CLS_ID: '500001'
           S3_OUTPUT_KEY: data/apt-price-index-all.json
           STATBL_ID: A_2024_00178
+      Events:
+        CollectAptPriceAllSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
+
 
   CollectAptPriceGreaterSeoul:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -44,6 +51,12 @@ Resources:
           CLS_ID: '500002'
           S3_OUTPUT_KEY: data/apt-price-index-greater-seoul.json
           STATBL_ID: A_2024_00178
+      Events:
+        CollectAptPriceGreaterSeoulSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectAptPriceSeoul:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -57,6 +70,12 @@ Resources:
           CLS_ID: '500007'
           S3_OUTPUT_KEY: data/apt-price-index-seoul.json
           STATBL_ID: A_2024_00178
+      Events:
+        CollectAptPriceSeoulSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectAptVolumeAll:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -72,6 +91,12 @@ Resources:
           STATBL_ID: A_2024_00178
           GRP_ID: '900001'
           ITM_ID: '100001'
+      Events:
+        CollectAptVolumeAllSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectAptVolumeGreaterSeoul:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -87,6 +112,12 @@ Resources:
           STATBL_ID: A_2024_00178
           GRP_ID: '900010'
           ITM_ID: '100001'
+      Events:
+        CollectAptVolumeGreaterSeoulSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectAptVolumeSeoul:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -102,6 +133,12 @@ Resources:
           STATBL_ID: A_2024_00178
           GRP_ID: '900002'
           ITM_ID: '100001'
+      Events:
+        CollectAptVolumeSeoulSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectBaseRateKorea:
     Type: AWS::Serverless::Function
@@ -116,6 +153,12 @@ Resources:
           STAT_CODE: '722Y001'
           CYCLE: 'M'
           ITEM_CODE: '0101000'
+      Events:
+        CollectBaseRateKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectCorporateBondRateKorea3AA:
     Type: AWS::Serverless::Function
@@ -130,6 +173,12 @@ Resources:
           STAT_CODE: '721Y001'
           CYCLE: 'M'
           ITEM_CODE: '5050000'
+      Events:
+        CollectCorporateBondRateKorea3AASchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectTreasuryBondKorea3:
     Type: AWS::Serverless::Function
@@ -144,6 +193,12 @@ Resources:
           STAT_CODE: '721Y001'
           CYCLE: 'M'
           ITEM_CODE: '5020000'
+      Events:
+        CollectTreasuryBondKorea3Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectTreasuryBondKorea10:
     Type: AWS::Serverless::Function
@@ -158,6 +213,12 @@ Resources:
           STAT_CODE: '721Y001'
           CYCLE: 'M'
           ITEM_CODE: '5050000'
+      Events:
+        CollectTreasuryBondKorea10Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectMortgageLoanRateKorea:
     Type: AWS::Serverless::Function
@@ -172,6 +233,12 @@ Resources:
           STAT_CODE: '121Y006'
           CYCLE: 'M'
           ITEM_CODE: 'BECBLA0302'
+      Events:
+        CollectMortgageLoanRateKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectHouseholdCreditsKorea:
     Type: AWS::Serverless::Function
@@ -186,6 +253,12 @@ Resources:
           STAT_CODE: '151Y001'
           CYCLE: 'Q'
           ITEM_CODE: '1100000'
+      Events:
+        CollectHouseholdCreditsKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectCurrenctAccountBalanceKorea:
     Type: AWS::Serverless::Function
@@ -200,6 +273,12 @@ Resources:
           STAT_CODE: '301Y017'
           CYCLE: 'M'
           ITEM_CODE: 'SA000'
+      Events:
+        CollectCurrenctAccountBalanceKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectExchangeRateDollarKorea:
     Type: AWS::Serverless::Function
@@ -214,6 +293,12 @@ Resources:
           STAT_CODE: '731Y004'
           CYCLE: 'M'
           ITEM_CODE: '0000001'
+      Events:
+        CollectExchangeRateDollarKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectM2Korea:
     Type: AWS::Serverless::Function
@@ -228,6 +313,12 @@ Resources:
           STAT_CODE: '101Y003'
           CYCLE: 'M'
           ITEM_CODE: 'BBHS00'
+      Events:
+        CollectM2KoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectCPIKorea:
     Type: AWS::Serverless::Function
@@ -242,6 +333,12 @@ Resources:
           STAT_CODE: '901Y009'
           CYCLE: 'M'
           ITEM_CODE: '0'
+      Events:
+        CollectCPIKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectPPIKorea:
     Type: AWS::Serverless::Function
@@ -256,6 +353,12 @@ Resources:
           STAT_CODE: '404Y014'
           CYCLE: 'M'
           ITEM_CODE: '*AA'
+      Events:
+        CollectPPIKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectRealGDPKorea:
     Type: AWS::Serverless::Function
@@ -270,6 +373,12 @@ Resources:
           STAT_CODE: '200Y104'
           CYCLE: 'Q'
           ITEM_CODE: '1400'
+      Events:
+        CollectRealGDPKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectUnemploymentRateKorea:
     Type: AWS::Serverless::Function
@@ -284,6 +393,12 @@ Resources:
           STAT_CODE: '901Y027'
           CYCLE: 'M'
           ITEM_CODE: 'I61BC'
+      Events:
+        CollectUnemploymentRateKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
 
   CollectForeignExchangeReservesKorea:
     Type: AWS::Serverless::Function
@@ -298,3 +413,9 @@ Resources:
           STAT_CODE: '732Y001'
           CYCLE: 'M'
           ITEM_CODE: '99'
+      Events:
+        CollectForeignExchangeReservesKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 10 * ? *)
+            Description: Trigger Lambda on 11th every month at 6AM KST
