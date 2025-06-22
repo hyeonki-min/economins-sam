@@ -23,7 +23,7 @@ def get_config():
 def get_default_date(cycle: str, type_: str) -> str:
     now = datetime.now()
     if type_ == 'start':
-        return '199901' if cycle == 'M' else '1999Q1'
+        return '199601' if cycle == 'M' else '1996Q1'
     elif type_ == 'end':
         if cycle == 'M':
             return now.strftime('%Y%m')

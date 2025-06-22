@@ -5,6 +5,16 @@ Description: >
 
   Sample SAM Template for economins-sam
 
+Parameters:
+  RebApiKey:
+    Type: String
+    NoEcho: true
+  EcosApiKey:
+    Type: String
+    NoEcho: true
+  KrxApiKey:
+    Type: String
+    NoEcho: true
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -12,12 +22,14 @@ Globals:
     Timeout: 10
     Environment:
       Variables:
-        REB_API_KEY: {REB_API_KEY}
-        ECOS_API_KEY: {ECOS_API_KEY}
+        REB_API_KEY: !Ref RebApiKey
+        ECOS_API_KEY: !Ref EcosApiKey
+        KRX_API_KEY: !Ref KrxApiKey
         S3_BUCKET_NAME: economins
     # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
+
 Resources:
   CollectAptPriceAll:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -229,7 +241,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-mortgage-load-rate-korea.json
+          S3_OUTPUT_KEY: data/mortgage-load-rate-korea.json
           STAT_CODE: '121Y006'
           CYCLE: 'M'
           ITEM_CODE: 'BECBLA0302'
@@ -249,7 +261,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-household-credits-korea.json
+          S3_OUTPUT_KEY: data/household-credits-korea.json
           STAT_CODE: '151Y001'
           CYCLE: 'Q'
           ITEM_CODE: '1100000'
@@ -269,7 +281,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-current-account-balance-korea.json
+          S3_OUTPUT_KEY: data/current-account-balance-korea.json
           STAT_CODE: '301Y017'
           CYCLE: 'M'
           ITEM_CODE: 'SA000'
@@ -289,7 +301,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-exchange-rate-dollar-korea.json
+          S3_OUTPUT_KEY: data/exchange-rate-dollar-korea.json
           STAT_CODE: '731Y004'
           CYCLE: 'M'
           ITEM_CODE: '0000001'
@@ -309,7 +321,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-m2-korea.json
+          S3_OUTPUT_KEY: data/m2-korea.json
           STAT_CODE: '101Y003'
           CYCLE: 'M'
           ITEM_CODE: 'BBHS00'
@@ -329,7 +341,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-cpi-korea.json
+          S3_OUTPUT_KEY: data/cpi-korea.json
           STAT_CODE: '901Y009'
           CYCLE: 'M'
           ITEM_CODE: '0'
@@ -349,7 +361,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-ppi-korea.json
+          S3_OUTPUT_KEY: data/ppi-korea.json
           STAT_CODE: '404Y014'
           CYCLE: 'M'
           ITEM_CODE: '*AA'
@@ -369,7 +381,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-real-gdp-korea.json
+          S3_OUTPUT_KEY: data/real-gdp-korea.json
           STAT_CODE: '200Y104'
           CYCLE: 'Q'
           ITEM_CODE: '1400'
@@ -389,10 +401,10 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-unemployment-rate-korea.json
+          S3_OUTPUT_KEY: data/unemployment-rate-korea.json
           STAT_CODE: '901Y027'
           CYCLE: 'M'
-          ITEM_CODE: 'I61BC'
+          ITEM_CODE: 'I61BD'
       Events:
         CollectUnemploymentRateKoreaSchedule:
           Type: Schedule
@@ -409,7 +421,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/ecos-foreign-exchange-reserves-korea.json
+          S3_OUTPUT_KEY: data/foreign-exchange-reserves-korea.json
           STAT_CODE: '732Y001'
           CYCLE: 'M'
           ITEM_CODE: '99'
@@ -419,3 +431,39 @@ Resources:
           Properties:
             Schedule: cron(0 21 10 * ? *)
             Description: Trigger Lambda on 11th every month at 6AM KST
+
+  CollectKospi:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-krx-kospi
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: krx/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/kospi.json
+          INDEX_TYPE: kospi_dd_trd
+      Events:
+        CollectKospiSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 1 * ? *)
+            Description: Trigger Lambda on 1th every month at 6AM KST
+
+  CollectKosdaq:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-krx-kosdaq
+      Role: arn:aws:iam::473618738265:role/economins-lambda
+      CodeUri: krx/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/kosdaq.json
+          INDEX_TYPE: kosdaq_dd_trd
+      Events:
+        CollectKosdaqSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 21 1 * ? *)
+            Description: Trigger Lambda on 1th every month at 6AM KST
