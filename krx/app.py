@@ -118,17 +118,17 @@ def append_latest_kospi():
     prev_month = move_to_prev_month(datetime.today())
     ym = prev_month.strftime("%Y-%m")
 
-    if ym in existing_months:
-        print(f"✅ {ym} 이미 존재. 건너뜀")
-        return
-
     data = get_last_trading_day_of_month(prev_month.year, prev_month.month)
     if data:
         ym, close_price = data
-        result.append({"x": ym, "y": close_price})
-        result.sort(key=lambda x: x['x'])
-        upload_json(result)
-        print(f"✅ {ym} 데이터 추가 완료")
+        existing_data[ym] = {"x": ym, "y": close_price}
+
+        updated_result = list(existing_data.values())
+        updated_result.sort(key=lambda x: x['x'])
+
+        upload_json(updated_result)
+
+        print(f"✅ {ym} 데이터 {'업데이트' if ym in existing_data else '추가'} 완료")
     else:
         print(f"⚠️ {ym} 종가 데이터 없음")
 
