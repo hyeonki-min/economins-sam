@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 
 s3 = boto3.client('s3')
-base_url = ''
+base_url = 'https://www.reb.or.kr/r-one/openapi/SttsApiTblData.do'
 
 
 BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")

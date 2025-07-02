@@ -56,10 +56,10 @@ def transform_data(data: dict) -> list:
                 # 분기 시작의 2개월도 null로 추가
                 for m in range(month_end - 2, month_end):
                     null_key = f"{year}-{m:02d}"
-                    result.append({null_key: None})
+                    result.append({"x": null_key, "y": None})
                 
                 value = round(float(item.get("DATA_VALUE", 0)), 1)
-                result.append({date_key: value})
+                result.append({"x": date_key, "y": value})
             except Exception:
                 continue
 
@@ -69,7 +69,7 @@ def transform_data(data: dict) -> list:
                 date_fmt = datetime.strptime(time_str, "%Y%m")
                 date_key = date_fmt.strftime("%Y-%m")
                 value = round(float(item.get("DATA_VALUE", 0)), 1)
-                result.append({date_key: value})
+                result.append({"x": date_key, "y": value})
             except Exception:
                 continue
     

@@ -14,24 +14,35 @@ KRX_API_KEY = os.environ.get("KRX_API_KEY")
 INDEX_TYPE = os.environ.get("INDEX_TYPE")
 
 # --- API 호출 및 코스피 종가 추출 --- #
-def get_kospi_close_price(date_str: str) -> int | None:
-    headers = {"AUTH_KEY": KRX_API_KEY}
+def get_kospi_close_price(date_str: str) -> float | None:
+    headers = {
+        "AUTH_KEY": KRX_API_KEY,
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    }
     url = f"http://data-dbg.krx.co.kr/svc/apis/idx/{INDEX_TYPE}"
     params = {"basDd": date_str}
 
-    try:
-        response = requests.get(url, headers=headers, params=params)
-        if response.status_code != 200:
-            return None
+    max_retries = 3
+    retry_delay = 3
 
-        data = response.json()
-        for item in data.get("OutBlock_1", []):
-            if item.get("IDX_NM") == "코스피":
-                return float(item["CLSPRC_IDX"])
-            if item.get("IDX_NM") == "코스닥":
-                return float(item["CLSPRC_IDX"])
-    except Exception as e:
-        print(f"[{date_str}] API 오류: {e}")
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                for item in data.get("OutBlock_1", []):
+                    if item.get("IDX_NM") in ["코스피", "코스닥"]:
+                        return float(item["CLSPRC_IDX"])
+                return None
+            elif response.status_code == 403:
+                print(f"[{date_str}] 403 Forbidden - {retry_delay}초 후 재시도 ({attempt}/{max_retries})")
+            else:
+                print(f"[{date_str}] HTTP 오류 {response.status_code} - 재시도 안 함")
+                return None
+        except requests.exceptions.RequestException as e:
+            print(f"[{date_str}] 요청 예외 발생: {e} - {retry_delay}초 후 재시도 ({attempt}/{max_retries})")
+
+        time.sleep(retry_delay)
     return None
 
 # --- 월별 마지막 거래일 찾기 --- #
@@ -114,10 +125,7 @@ def move_to_prev_month(date_obj: datetime) -> datetime:
 # --- 최신 월 데이터만 추가 --- #
 def append_latest_kospi():
     result = load_existing_data()
-    existing_months = {item['x'] for item in result}
     prev_month = move_to_prev_month(datetime.today())
-    ym = prev_month.strftime("%Y-%m")
-
     data = get_last_trading_day_of_month(prev_month.year, prev_month.month)
     if data:
         ym, close_price = data
