@@ -184,7 +184,7 @@ Resources:
           S3_OUTPUT_KEY: data/corporate-bond-korea-3-aa.json
           STAT_CODE: '721Y001'
           CYCLE: 'M'
-          ITEM_CODE: '5050000'
+          ITEM_CODE: '7020000'
       Events:
         CollectCorporateBondRateKorea3AASchedule:
           Type: Schedule
@@ -241,7 +241,7 @@ Resources:
       Handler: app.lambda_handler
       Environment:
         Variables:
-          S3_OUTPUT_KEY: data/mortgage-load-rate-korea.json
+          S3_OUTPUT_KEY: data/mortgage-rate-korea.json
           STAT_CODE: '121Y006'
           CYCLE: 'M'
           ITEM_CODE: 'BECBLA0302'
@@ -305,6 +305,7 @@ Resources:
           STAT_CODE: '731Y004'
           CYCLE: 'M'
           ITEM_CODE: '0000001'
+          ITEM_CODE2: '0000200'
       Events:
         CollectExchangeRateDollarKoreaSchedule:
           Type: Schedule
@@ -404,7 +405,8 @@ Resources:
           S3_OUTPUT_KEY: data/unemployment-rate-korea.json
           STAT_CODE: '901Y027'
           CYCLE: 'M'
-          ITEM_CODE: 'I61BD'
+          ITEM_CODE: 'I61BC'
+          ITEM_CODE2: 'I28B'
       Events:
         CollectUnemploymentRateKoreaSchedule:
           Type: Schedule

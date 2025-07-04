@@ -2,6 +2,7 @@ import json
 import boto3
 from datetime import datetime
 import os
+import requests
 
 s3 = boto3.client('s3')
 base_url = 'https://www.reb.or.kr/r-one/openapi/SttsApiTblData.do'
@@ -42,7 +43,7 @@ def transform_data(data):
             continue
 
         value = round(float(item.get("DTA_VAL", 0)), 1)
-        result.append({date_key: value})
+        result.append({"x": date_key, "y": value})
     
     return result
 

@@ -15,7 +15,8 @@ def get_config():
         "OUTPUT_KEY": os.environ["S3_OUTPUT_KEY"],
         "ECOS_API_KEY": os.environ["ECOS_API_KEY"],
         "STAT_CODE": os.environ["STAT_CODE"],
-        "ITEM_CODE": os.environ.get("ITEM_CODE", ""),  # 선택적
+        "ITEM_CODE": os.environ.get("ITEM_CODE", ""),
+        "ITEM_CODE2": os.environ.get("ITEM_CODE2", ""),
         "CYCLE": os.environ["CYCLE"]
     }
 
@@ -34,10 +35,15 @@ def get_default_date(cycle: str, type_: str) -> str:
 
 # === API URL 생성 ===
 def build_api_url(config: dict, start_date: str, end_date: str) -> str:
-    return (
+    base = (
         f"{BASE_URL}/{config['ECOS_API_KEY']}/json/kr/1/1000/"
         f"{config['STAT_CODE']}/{config['CYCLE']}/{start_date}/{end_date}/{config['ITEM_CODE']}"
     )
+    
+    if config.get('ITEM_CODE2'):
+        base += f"/{config['ITEM_CODE2']}"
+    
+    return base
 
 # === 데이터 가공 ===
 def transform_data(data: dict) -> list:
