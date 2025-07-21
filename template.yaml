@@ -15,6 +15,10 @@ Parameters:
   KrxApiKey:
     Type: String
     NoEcho: true
+  LambdaRoleName:
+    Type: String
+  AccountId:
+    Type: String
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -32,10 +36,10 @@ Globals:
 
 Resources:
   CollectAptPriceAll:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-price-index-all
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -48,14 +52,14 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
 
   CollectAptPriceGreaterSeoul:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-price-index-greater-seoul
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -68,13 +72,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectAptPriceSeoul:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-price-index-seoul
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -87,13 +91,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectAptVolumeAll:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-volume-all
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -108,13 +112,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectAptVolumeGreaterSeoul:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-volume-greater-seoul
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -129,13 +133,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,10 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectAptVolumeSeoul:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-volume-seoul
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -150,13 +154,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectBaseRateKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-base-rate-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -170,13 +174,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectCorporateBondRateKorea3AA:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-corporate-bond-korea-3-aa
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -190,13 +194,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectTreasuryBondKorea3:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-treasury-bond-korea-3
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -210,13 +214,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectTreasuryBondKorea10:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-treasury-bond-korea-10
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -230,13 +234,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectMortgageLoanRateKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-mortgage-load-rate-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -250,13 +254,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectHouseholdCreditsKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-household-credits-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -270,13 +274,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectCurrenctAccountBalanceKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-current-account-balance-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -290,13 +294,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectExchangeRateDollarKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-exchange-rate-dollar-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -311,13 +315,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectM2Korea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-m2-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -331,13 +335,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectCPIKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-cpi-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -351,13 +355,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectPPIKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-ppi-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -371,13 +375,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectRealGDPKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-real-gdp-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -391,13 +395,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectUnemploymentRateKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-unemployment-rate-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -412,13 +416,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectForeignExchangeReservesKorea:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-foreign-exchange-reserves-korea
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -432,13 +436,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectKospi:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-krx-kospi
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: krx/
       Handler: app.lambda_handler
       Environment:
@@ -450,13 +454,13 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
 
   CollectKosdaq:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-krx-kosdaq
-      Role: arn:aws:iam::473618738265:role/economins-lambda
+      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: krx/
       Handler: app.lambda_handler
       Environment:
@@ -468,4 +472,4 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 3PM KST
+            Description: Trigger Lambda on 2st,11th every month at 6AM KST
