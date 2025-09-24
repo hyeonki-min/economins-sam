@@ -53,8 +53,8 @@ Resources:
         CollectAptPriceAllSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
 
   CollectAptPriceGreaterSeoul:
@@ -73,8 +73,8 @@ Resources:
         CollectAptPriceGreaterSeoulSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectAptPriceSeoul:
     Type: AWS::Serverless::Function 
@@ -92,8 +92,8 @@ Resources:
         CollectAptPriceSeoulSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectAptVolumeAll:
     Type: AWS::Serverless::Function 
@@ -113,8 +113,8 @@ Resources:
         CollectAptVolumeAllSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectAptVolumeGreaterSeoul:
     Type: AWS::Serverless::Function 
@@ -135,7 +135,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,10 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectAptVolumeSeoul:
     Type: AWS::Serverless::Function 
@@ -155,8 +155,8 @@ Resources:
         CollectAptVolumeSeoulSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectBaseRateKorea:
     Type: AWS::Serverless::Function
@@ -175,8 +175,8 @@ Resources:
         CollectBaseRateKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectCorporateBondRateKorea3AA:
     Type: AWS::Serverless::Function
@@ -195,8 +195,8 @@ Resources:
         CollectCorporateBondRateKorea3AASchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectTreasuryBondKorea3:
     Type: AWS::Serverless::Function
@@ -215,8 +215,8 @@ Resources:
         CollectTreasuryBondKorea3Schedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectTreasuryBondKorea10:
     Type: AWS::Serverless::Function
@@ -235,8 +235,8 @@ Resources:
         CollectTreasuryBondKorea10Schedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectMortgageLoanRateKorea:
     Type: AWS::Serverless::Function
@@ -255,8 +255,8 @@ Resources:
         CollectMortgageLoanRateKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectHouseholdCreditsKorea:
     Type: AWS::Serverless::Function
@@ -275,8 +275,8 @@ Resources:
         CollectHouseholdCreditsKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectCurrenctAccountBalanceKorea:
     Type: AWS::Serverless::Function
@@ -295,8 +295,8 @@ Resources:
         CollectCurrenctAccountBalanceKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectExchangeRateDollarKorea:
     Type: AWS::Serverless::Function
@@ -316,8 +316,8 @@ Resources:
         CollectExchangeRateDollarKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectM2Korea:
     Type: AWS::Serverless::Function
@@ -336,8 +336,8 @@ Resources:
         CollectM2KoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectCPIKorea:
     Type: AWS::Serverless::Function
@@ -356,8 +356,8 @@ Resources:
         CollectCPIKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectPPIKorea:
     Type: AWS::Serverless::Function
@@ -376,8 +376,8 @@ Resources:
         CollectPPIKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectRealGDPKorea:
     Type: AWS::Serverless::Function
@@ -396,8 +396,8 @@ Resources:
         CollectRealGDPKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectUnemploymentRateKorea:
     Type: AWS::Serverless::Function
@@ -417,8 +417,8 @@ Resources:
         CollectUnemploymentRateKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectForeignExchangeReservesKorea:
     Type: AWS::Serverless::Function
@@ -437,8 +437,8 @@ Resources:
         CollectForeignExchangeReservesKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 2,12,22 * ? *)
+            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
 
   CollectKospi:
     Type: AWS::Serverless::Function
@@ -455,8 +455,8 @@ Resources:
         CollectKospiSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 3 * ? *)
+            Description: Trigger Lambda on 4th every month at 6AM KST
 
   CollectKosdaq:
     Type: AWS::Serverless::Function
@@ -473,5 +473,5 @@ Resources:
         CollectKosdaqSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,11 * ? *)
-            Description: Trigger Lambda on 2st,11th every month at 6AM KST
+            Schedule: cron(0 21 3 * ? *)
+            Description: Trigger Lambda on 4th every month at 6AM KST
