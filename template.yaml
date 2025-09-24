@@ -29,6 +29,8 @@ Globals:
         REB_API_KEY: !Ref RebApiKey
         ECOS_API_KEY: !Ref EcosApiKey
         KRX_API_KEY: !Ref KrxApiKey
+        LambdaRoleName: !Ref LambdaRoleName
+        AccountId: !Ref AccountId
         S3_BUCKET_NAME: economins
     # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
@@ -39,7 +41,7 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-price-index-all
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -59,7 +61,7 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-price-index-greater-seoul
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -78,7 +80,7 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-price-index-seoul
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -97,7 +99,7 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-volume-all
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -118,7 +120,7 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-volume-greater-seoul
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -139,7 +141,7 @@ Resources:
     Type: AWS::Serverless::Function 
     Properties:
       FunctionName: collect-reb-apt-volume-seoul
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
       Environment:
@@ -160,7 +162,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-base-rate-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -180,7 +182,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-corporate-bond-korea-3-aa
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -200,7 +202,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-treasury-bond-korea-3
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -220,7 +222,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-treasury-bond-korea-10
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -240,7 +242,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-mortgage-load-rate-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -260,7 +262,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-household-credits-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -280,7 +282,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-current-account-balance-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -300,7 +302,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-exchange-rate-dollar-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -321,7 +323,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-m2-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -341,7 +343,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-cpi-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -361,7 +363,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-ppi-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -381,7 +383,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-real-gdp-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -401,7 +403,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-unemployment-rate-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -422,7 +424,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-ecos-foreign-exchange-reserves-korea
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
       Environment:
@@ -442,7 +444,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-krx-kospi
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: krx/
       Handler: app.lambda_handler
       Environment:
@@ -460,7 +462,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: collect-krx-kosdaq
-      Role: arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: krx/
       Handler: app.lambda_handler
       Environment:
