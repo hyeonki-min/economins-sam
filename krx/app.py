@@ -4,6 +4,7 @@ import boto3
 import calendar
 import json
 import os
+import time
 
 # --- 설정 --- #
 s3 = boto3.client('s3')
