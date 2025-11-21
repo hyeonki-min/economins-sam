@@ -125,21 +125,24 @@ def move_to_prev_month(date_obj: datetime) -> datetime:
 
 # --- 최신 월 데이터만 추가 --- #
 def append_latest_kospi():
-    result = load_existing_data()
+    existing_data = load_existing_data()
     prev_month = move_to_prev_month(datetime.today())
     data = get_last_trading_day_of_month(prev_month.year, prev_month.month)
     if data:
         ym, close_price = data
+
+        is_update = ym in existing_data  # 추가인지 업데이트인지 미리 체크
+
+        # 기존 데이터에 추가 또는 갱신
         existing_data[ym] = {"x": ym, "y": close_price}
 
+        # 정렬
         updated_result = list(existing_data.values())
         updated_result.sort(key=lambda x: x['x'])
 
+        # 업로드
         upload_json(updated_result)
 
-        print(f"✅ {ym} 데이터 {'업데이트' if ym in existing_data else '추가'} 완료")
+        print(f"✅ {ym} 데이터 {'업데이트' if is_update else '추가'} 완료")
     else:
-        print(f"⚠️ {ym} 종가 데이터 없음")
-
-def lambda_handler(event, context):
-    append_latest_kospi()
+        print(f"⚠️ {prev_month.strftime('%Y-%m')} 종가 데이터 없음")
