@@ -66,37 +66,6 @@ def unify_roman_and_symbols(text: str) -> str:
     return text
 
 
-def build_author_pattern():
-    DEPT_KEYWORDS = [
-        "조사국", "금융시장국", "국제국", "금융결제국",
-        "경제통계1국", "경제통계2국", "금융안정국", "통화정책국",
-        "경제연구원", "외자운용원", "국제협력국", "발권국",
-        "금융업무국"
-    ]
-    dept_regex = "|".join([re.escape(d) for d in DEPT_KEYWORDS])
-    # 괄호 내부에 부서명이 word boundary로 등장하는 경우만 허용
-    return rf"(\([^)]*(?:{dept_regex})[^)]*\))"
-
-
-def split_paragraphs_by_roman(text: str) -> list[str]:
-    author_pattern = build_author_pattern()
-    tokens = re.split(author_pattern, text)
-
-    paragraphs = []
-    i = 1
-    while i < len(tokens):
-        header = tokens[i].strip()
-        content = tokens[i+1].strip() if i + 1 < len(tokens) else ""
-        paragraphs.append(f"{header} {content}".strip())
-        i += 2
-
-    pre = tokens[0].strip()
-    if pre and paragraphs:
-        paragraphs[0] = (pre + " " + paragraphs[0]).strip()
-
-    return [p for p in paragraphs if p.strip()]
-
-
 def remove_table_of_contents(text: str) -> str:
     m = re.search(r"[ⅠI]\s*-\s*1", text)
     if m:
@@ -138,15 +107,16 @@ def clean_non_text_blocks(paragraph: str) -> str:
 
 
 def extract_paragraphs(raw_text: str) -> list[str]:
+    # (1) normalize
     text = unify_roman_and_symbols(raw_text)
     text = normalize_text(text)
+    # (2) 목차 제거
     text = remove_table_of_contents(text)
+    # (3) 말미 통계 제거
     text = cut_statistics_section(text)
-
-    paras = split_paragraphs_by_roman(text)
-    cleaned = [clean_non_text_blocks(p) for p in paras]
+    # (4) 줄 기반 문단 후보
+    cleaned = clean_non_text_blocks(text)
     return cleaned
-
 
 # ------------------------
 # 2. summary prompt & batch jsonl
@@ -170,54 +140,52 @@ def build_system_prompt(text: str):
     lines = decide_summary_lines(tokens)
     return f"""
 너는 경제 분석 전문가야. 
-다음 문단을 불필요한 문장이나 반복 표현은 제거하고 핵심 경제 흐름만 정리하고 핵심만 {lines}로 요약해줘. 
-이를 대표하는 제목을 1줄로 작성해줘.
+다음 문단을 불필요한 문장이나 반복 표현은 제거하고 핵심 경제 흐름만 정리하여 핵심 내용을 {lines}로 요약해줘. 
+요약은 '핵심 문장 단위 문자열 리스트' 형태로 반환해야 해.
+또한 기준 금리 변동 여부를 제목으로 1줄로 작성해줘.
 """
 
-def create_batch_jsonl(paragraphs, output_file="/tmp/batch_input.jsonl"):
+def create_batch_jsonl(paragraph, output_file="/tmp/batch_input.jsonl"):
     with open(output_file, "w", encoding="utf-8") as f:
-        for i, para in enumerate(paragraphs, start=1):
-            prompt = build_system_prompt(para)
-
-            item = {
-                "custom_id": f"para-{i:04d}",
-                "method": "POST",
-                "url": "/v1/chat/completions",
-                "body": {
-                    "model": "gpt-5.1",
-                    "messages": [
-                        {"role": "system", "content": prompt},
-                        {"role": "user", "content": para},
-                    ],
-                    "max_completion_tokens": 1000,
-                    "temperature": 0,
-                    "response_format": {
-                        "type": "json_schema",
-                        "json_schema": {
-                          "name": "paragraph_summary",
-                          "schema": {
-                            "type": "object",
-                            "properties": {
-                                "title": {
-                                    "type": "string"
-                                },
-                                "summary": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
+        prompt = build_system_prompt(paragraph)
+        item = {
+            "custom_id": f"para-0000",
+            "method": "POST",
+            "url": "/v1/chat/completions",
+            "body": {
+                "model": "gpt-5.1",
+                "messages": [
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": paragraph},
+                ],
+                "max_completion_tokens": 800,
+                "temperature": 0,
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                      "name": "paragraph_summary",
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string"
                             },
-                            "required": ["title", "summary"],
-                          }
-                        }
-                      },
+                            "summary": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "required": ["title", "summary"],
+                      }
+                    }
+                  },
                 },
             }
-            f.write(json.dumps(item, ensure_ascii=False) + "\n")
+        f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
     return output_file
-
 
 # ------------------------
 # 3. PDF 다운로드 & Batch 제출
@@ -266,8 +234,8 @@ def extract_pdf_links(page_url):
         tds = row.find_all("td")
         if not tds:
             continue
-        last_td = tds[-1]
-        link = last_td.select_one("div.fileGoupBox li.ajasOpen5Btn a.i-download[href]")
+        last_td = tds[1]
+        link = last_td.select_one("div.fileGoupBox ul li:nth-of-type(2) a.i-download[href]")
         if not link:
             continue
 
@@ -285,17 +253,18 @@ def should_download_today(page_url, today=None):
 
     pdfs = extract_pdf_links(page_url)
     year = today.year
+
+    short_code = f"{year % 100:02d}{month:02d}"
     expected_code = f"{year}-{month:02d}"
 
     for info in pdfs:
-        if f"({year}.{month}월" in info["filename"]:
+        if short_code in info["filename"]:
             return {
                 **info,
                 "code": expected_code
             }
 
     return None
-
 
 def download_pdf(pdf_url, filename):
     path = f"/tmp/{filename}"
@@ -359,7 +328,7 @@ def lambda_handler(event, context):
     batch = submit_batch(jsonl_path)
     save_batch_id(batch.id, pdf_info["code"])
 
-    msg = f"📌 *OpenAI Batch Issue 요청 완료!*\n• Batch ID: `{batch.id}`"
+    msg = f"📌 *OpenAI Batch Decision 요청 완료!*\n• Batch ID: `{batch.id}`"
     send_slack_message(msg)
 
     return {

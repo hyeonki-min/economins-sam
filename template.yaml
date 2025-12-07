@@ -15,6 +15,15 @@ Parameters:
   KrxApiKey:
     Type: String
     NoEcho: true
+  OpenAiKey:
+    Type: String
+    NoEcho: true
+  DdbTable:
+    Type: String
+    NoEcho: true
+  SlackWebhookUrl:
+    Type: String
+    NoEcho: true
   LambdaRoleName:
     Type: String
   AccountId:
@@ -29,6 +38,9 @@ Globals:
         REB_API_KEY: !Ref RebApiKey
         ECOS_API_KEY: !Ref EcosApiKey
         KRX_API_KEY: !Ref KrxApiKey
+        OPENAI_API_KEY: !Ref OpenAiKey
+        DDB_TABLE: !Ref DdbTable
+        SLACK_WEBHOOK_URL: !Ref SlackWebhookUrl
         LambdaRoleName: !Ref LambdaRoleName
         AccountId: !Ref AccountId
         S3_BUCKET_NAME: economins
@@ -37,6 +49,19 @@ Globals:
       LogFormat: JSON
 
 Resources:
+  BatchJobTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${DdbTable}"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: batch_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: batch_id
+          KeyType: HASH
+
+
   CollectAptPriceAll:
     Type: AWS::Serverless::Function 
     Properties:
@@ -475,3 +500,39 @@ Resources:
           Properties:
             Schedule: cron(0 21 3 * ? *)
             Description: Trigger Lambda on 4th every month at 6AM KST
+
+  CollectMonetaryPolicyIssue:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-bok-monetary-policy-issue
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: bok/
+      Handler: app_issue.lambda_handler
+      Environment:
+        Variables:
+          BOK_PAGE_URL: https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?mtgSe=A&menuNo=200755
+      Timeout: 360
+      Events:
+        CollectMonetaryPolicyIssueSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 0 ? * 5#1 *)"  # 매월 첫째주 금요일 00:00 UTC = KST 09:00
+            Description: "매월 마지막주 목요일+8일(=첫째주 금요일)에 실행"
+  
+  CollectMonetaryPolicyDecision:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-bok-monetary-policy-decision
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: bok/
+      Handler: app_decision.lambda_handler
+      Environment:
+        Variables:
+          BOK_PAGE_URL: https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?mtgSe=A&menuNo=200755
+      Timeout: 180
+      Events:
+        CollectMonetaryPolicyDecisionSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 0 ? * FRIL *)"  # 매월 마지막주 금요일 00:00 UTC = KST 09:00
+            Description: "매월 마지막주 금요일에 실행"
