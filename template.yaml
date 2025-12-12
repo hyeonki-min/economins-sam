@@ -49,19 +49,6 @@ Globals:
       LogFormat: JSON
 
 Resources:
-  BatchJobTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: !Sub "${DdbTable}"
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: batch_id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: batch_id
-          KeyType: HASH
-
-
   CollectAptPriceAll:
     Type: AWS::Serverless::Function 
     Properties:
@@ -516,8 +503,8 @@ Resources:
         CollectMonetaryPolicyIssueSchedule:
           Type: Schedule
           Properties:
-            Schedule: "cron(0 0 ? * 5#1 *)"  # 매월 첫째주 금요일 00:00 UTC = KST 09:00
-            Description: "매월 마지막주 목요일+8일(=첫째주 금요일)에 실행"
+            Schedule: "cron(0 7 ? * THU *)"
+            Description: "매월 목요일 KST 16:00에 실행"
   
   CollectMonetaryPolicyDecision:
     Type: AWS::Serverless::Function
@@ -534,5 +521,20 @@ Resources:
         CollectMonetaryPolicyDecisionSchedule:
           Type: Schedule
           Properties:
-            Schedule: "cron(0 0 ? * FRIL *)"  # 매월 마지막주 금요일 00:00 UTC = KST 09:00
-            Description: "매월 마지막주 금요일에 실행"
+            Schedule: "cron(0 7 ? * THU *)"
+            Description: "매월 목요일 KST 16:00에 실행"
+
+  CollectMonetaryPolicyBatchOutput:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-bok-monetary-policy-batch-output
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: bok/
+      Handler: app_batch.lambda_handler
+      Timeout: 180
+      Events:
+        CollectMonetaryPolicyBatchOutputSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 8 ? * THU *)"
+            Description: "매월 목요일 KST 17:00에 실행"

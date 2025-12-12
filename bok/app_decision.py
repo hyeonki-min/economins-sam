@@ -2,6 +2,7 @@ import os
 import re
 import json
 import boto3
+from boto3.dynamodb.conditions import Key
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -211,7 +212,7 @@ def get_target_report_month(today=None):
 
     for (m, d) in PUBLISH_DATES:
         release_day = datetime(year, m, d)
-        available = release_day + timedelta(days=7)
+        available = release_day + timedelta(days=0)
         release_days.append((m, available))
 
     release_days.sort(key=lambda x: x[1])
@@ -289,9 +290,18 @@ def submit_batch(file_path):
     return batch_job
 
 
-def save_batch_id(batch_id, code):
-    table.put_item(Item={"batch_id": batch_id, "code": code, "status": "pending"})
+def save_batch_id(batch_id: str, code: str, type_: str):
+    item = {
+        "code_type": f"{code}#{type_}",
+        "code": code,
+        "type": type_,
+        "batch_id": batch_id,
+        "status": "pending",
+        "created_at": datetime.now().isoformat(),
+    }
 
+    table.put_item(Item=item)
+    return item
 
 # ------------------------
 # 4. Slack 메시지
@@ -308,6 +318,14 @@ def send_slack_message(text: str):
     print("[Slack] status:", resp.status_code)
     print("[Slack] response:", resp.text)
 
+def exists_batch(code, type_):
+    code_type = f"{code}#{type_}"
+
+    resp = table.query(
+        KeyConditionExpression=Key("code_type").eq(code_type)
+    )
+
+    return resp["Count"] > 0
 
 # ------------------------
 # 5. Lambda Handler
@@ -318,7 +336,8 @@ def lambda_handler(event, context):
     pdf_info = should_download_today(BOK_PAGE_URL, today=datetime.today())
     if not pdf_info:
         return {"message": "No PDF available today."}
-
+    if exists_batch(pdf_info["code"], "bok-decision"):
+        return {"message": "Already process."}
     pdf_path = download_pdf(pdf_info["url"], pdf_info["filename"])
 
     raw = extract_text(pdf_path)
@@ -326,7 +345,7 @@ def lambda_handler(event, context):
     jsonl_path = create_batch_jsonl(paragraphs)
 
     batch = submit_batch(jsonl_path)
-    save_batch_id(batch.id, pdf_info["code"])
+    save_batch_id(batch.id, pdf_info["code"], "bok-decision")
 
     msg = f"📌 *OpenAI Batch Decision 요청 완료!*\n• Batch ID: `{batch.id}`"
     send_slack_message(msg)
