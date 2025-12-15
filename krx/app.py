@@ -28,12 +28,12 @@ def get_kospi_close_price(date_str: str) -> float | None:
 
     for attempt in range(1, max_retries + 1):
         try:
-            response = requests.get(url, headers=headers, params=params)
+            response = requests.get(url, headers=headers, params=params, timeout=10)
             if response.status_code == 200:
                 data = response.json()
                 for item in data.get("OutBlock_1", []):
                     if item.get("IDX_NM") in ["코스피", "코스닥"]:
-                        return float(item["CLSPRC_IDX"])
+                        return float(item["CLSPRC_IDX"].replace(",", ""))
                 return None
             elif response.status_code == 403:
                 print(f"[{date_str}] 403 Forbidden - {retry_delay}초 후 재시도 ({attempt}/{max_retries})")
@@ -126,23 +126,28 @@ def move_to_prev_month(date_obj: datetime) -> datetime:
 # --- 최신 월 데이터만 추가 --- #
 def append_latest_kospi():
     existing_data = load_existing_data()
+    
     prev_month = move_to_prev_month(datetime.today())
     data = get_last_trading_day_of_month(prev_month.year, prev_month.month)
-    if data:
-        ym, close_price = data
 
-        is_update = ym in existing_data  # 추가인지 업데이트인지 미리 체크
-
-        # 기존 데이터에 추가 또는 갱신
-        existing_data[ym] = {"x": ym, "y": close_price}
-
-        # 정렬
-        updated_result = list(existing_data.values())
-        updated_result.sort(key=lambda x: x['x'])
-
-        # 업로드
-        upload_json(updated_result)
-
-        print(f"✅ {ym} 데이터 {'업데이트' if is_update else '추가'} 완료")
-    else:
+    if not data:
         print(f"⚠️ {prev_month.strftime('%Y-%m')} 종가 데이터 없음")
+        return
+
+    ym, close_price = data
+
+    updated = False
+
+    for item in existing_data:
+        if item.get("x") == ym:
+            item["y"] = close_price
+            updated = True
+            break
+
+    if not updated:
+        existing_data.append({"x": ym, "y": close_price})
+        
+    existing_data.sort(key=lambda x: x["x"])
+    upload_json(existing_data)
+
+    print(f"✅ {ym} 데이터 {'업데이트' if updated else '추가'} 완료")
