@@ -49,6 +49,14 @@ Globals:
       LogFormat: JSON
 
 Resources:
+  CommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: economins-common
+      ContentUri: layers/common
+      CompatibleRuntimes:
+        - python3.13
+
   CollectAptPriceAll:
     Type: AWS::Serverless::Function 
     Properties:
@@ -56,6 +64,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -65,9 +75,8 @@ Resources:
         CollectAptPriceAllSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
-
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectAptPriceGreaterSeoul:
     Type: AWS::Serverless::Function 
@@ -76,6 +85,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           CLS_ID: '500002'
@@ -85,8 +96,8 @@ Resources:
         CollectAptPriceGreaterSeoulSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectAptPriceSeoul:
     Type: AWS::Serverless::Function 
@@ -95,6 +106,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           CLS_ID: '500007'
@@ -104,8 +117,8 @@ Resources:
         CollectAptPriceSeoulSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectAptVolumeAll:
     Type: AWS::Serverless::Function 
@@ -114,6 +127,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -125,8 +140,8 @@ Resources:
         CollectAptVolumeAllSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectAptVolumeGreaterSeoul:
     Type: AWS::Serverless::Function 
@@ -135,6 +150,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -147,7 +164,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 21 2,10 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectAptVolumeSeoul:
     Type: AWS::Serverless::Function 
@@ -156,6 +173,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: reb/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           CLS_ID: '500001'
@@ -167,8 +186,8 @@ Resources:
         CollectAptVolumeSeoulSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectBaseRateKorea:
     Type: AWS::Serverless::Function
@@ -177,6 +196,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/base-rate-korea.json
@@ -187,8 +208,8 @@ Resources:
         CollectBaseRateKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectCorporateBondRateKorea3AA:
     Type: AWS::Serverless::Function
@@ -197,6 +218,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/corporate-bond-korea-3-aa.json
@@ -207,8 +230,8 @@ Resources:
         CollectCorporateBondRateKorea3AASchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectTreasuryBondKorea3:
     Type: AWS::Serverless::Function
@@ -217,6 +240,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/treasury-bond-korea-3.json
@@ -227,8 +252,8 @@ Resources:
         CollectTreasuryBondKorea3Schedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectTreasuryBondKorea10:
     Type: AWS::Serverless::Function
@@ -237,6 +262,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/treasury-bond-korea-10.json
@@ -247,8 +274,8 @@ Resources:
         CollectTreasuryBondKorea10Schedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectMortgageLoanRateKorea:
     Type: AWS::Serverless::Function
@@ -257,6 +284,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/mortgage-rate-korea.json
@@ -267,8 +296,8 @@ Resources:
         CollectMortgageLoanRateKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectHouseholdCreditsKorea:
     Type: AWS::Serverless::Function
@@ -277,6 +306,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/household-credits-korea.json
@@ -287,8 +318,8 @@ Resources:
         CollectHouseholdCreditsKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectCurrenctAccountBalanceKorea:
     Type: AWS::Serverless::Function
@@ -297,6 +328,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/current-account-balance-korea.json
@@ -307,8 +340,8 @@ Resources:
         CollectCurrenctAccountBalanceKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectExchangeRateDollarKorea:
     Type: AWS::Serverless::Function
@@ -317,6 +350,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/exchange-rate-dollar-korea.json
@@ -328,8 +363,8 @@ Resources:
         CollectExchangeRateDollarKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectM2Korea:
     Type: AWS::Serverless::Function
@@ -338,6 +373,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/m2-korea.json
@@ -348,8 +385,8 @@ Resources:
         CollectM2KoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectCPIKorea:
     Type: AWS::Serverless::Function
@@ -358,6 +395,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/cpi-korea.json
@@ -368,8 +407,8 @@ Resources:
         CollectCPIKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectPPIKorea:
     Type: AWS::Serverless::Function
@@ -378,6 +417,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/ppi-korea.json
@@ -388,8 +429,8 @@ Resources:
         CollectPPIKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectRealGDPKorea:
     Type: AWS::Serverless::Function
@@ -398,6 +439,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/real-gdp-korea.json
@@ -408,8 +451,8 @@ Resources:
         CollectRealGDPKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectUnemploymentRateKorea:
     Type: AWS::Serverless::Function
@@ -418,6 +461,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/unemployment-rate-korea.json
@@ -429,8 +474,8 @@ Resources:
         CollectUnemploymentRateKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectForeignExchangeReservesKorea:
     Type: AWS::Serverless::Function
@@ -439,6 +484,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: ecos/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/foreign-exchange-reserves-korea.json
@@ -449,8 +496,8 @@ Resources:
         CollectForeignExchangeReservesKoreaSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 2,12,22 * ? *)
-            Description: Trigger Lambda on 2st, 13th, 23rd every month at 6AM KST
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
   CollectKospi:
     Type: AWS::Serverless::Function
@@ -459,6 +506,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: krx/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/kospi.json
@@ -467,8 +516,8 @@ Resources:
         CollectKospiSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 3 * ? *)
-            Description: Trigger Lambda on 4th every month at 6AM KST
+            Schedule: cron(0 9 1,2,3 * ? *)
+            Description: Trigger Lambda on 1,2,3 every month at 6PM KST
 
   CollectKosdaq:
     Type: AWS::Serverless::Function
@@ -477,6 +526,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: krx/
       Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/kosdaq.json
@@ -485,8 +536,8 @@ Resources:
         CollectKosdaqSchedule:
           Type: Schedule
           Properties:
-            Schedule: cron(0 21 3 * ? *)
-            Description: Trigger Lambda on 4th every month at 6AM KST
+            Schedule: cron(0 9 1,2,3 * ? *)
+            Description: Trigger Lambda on 1,2,3 every month at 6PM KST
 
   CollectMonetaryPolicyIssue:
     Type: AWS::Serverless::Function
@@ -495,6 +546,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: bok/
       Handler: app_issue.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           BOK_PAGE_URL: https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?mtgSe=A&menuNo=200755
@@ -513,6 +566,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: bok/
       Handler: app_decision.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Environment:
         Variables:
           BOK_PAGE_URL: https://www.bok.or.kr/portal/singl/crncyPolicyDrcMtg/listYear.do?mtgSe=A&menuNo=200755
@@ -531,6 +586,8 @@ Resources:
       Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
       CodeUri: bok/
       Handler: app_batch.lambda_handler
+      Layers:
+        - !Ref CommonLayer
       Timeout: 180
       Events:
         CollectMonetaryPolicyBatchOutputSchedule:

@@ -1,3 +1,4 @@
+from common.slack import send_slack_message
 import os
 import re
 import json
@@ -18,6 +19,7 @@ dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["DDB_TABLE"])
 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+BOK_PAGE_URL = os.environ["BOK_PAGE_URL"]
 
 
 # ------------------------
@@ -185,7 +187,7 @@ def create_batch_jsonl(paragraphs, output_file="/tmp/batch_input.jsonl"):
                 "method": "POST",
                 "url": "/v1/chat/completions",
                 "body": {
-                    "model": "gpt-5.1",
+                    "model": "gpt-5.2",
                     "messages": [
                         {"role": "system", "content": prompt},
                         {"role": "user", "content": para},
@@ -220,9 +222,6 @@ def create_batch_jsonl(paragraphs, output_file="/tmp/batch_input.jsonl"):
     return output_file
 
 
-# ------------------------
-# 3. PDF 다운로드 & Batch 제출
-# ------------------------
 PUBLISH_DATES = [
     (1, 16),
     (2, 25),
@@ -236,21 +235,18 @@ PUBLISH_DATES = [
 
 
 def get_target_report_month(today=None):
-    if today is None:
-        today = datetime.today()
-
+    today = today or datetime.today()
     year = today.year
-    release_days = []
 
-    for (m, d) in PUBLISH_DATES:
-        release_day = datetime(year, m, d)
-        available = release_day + timedelta(days=7)
-        release_days.append((m, available))
+    release_days = []
+    for m, d in PUBLISH_DATES:
+        release_day = datetime(year, m, d) + timedelta(days=7)
+        release_days.append((m, release_day))
 
     release_days.sort(key=lambda x: x[1])
 
     target = None
-    for (m, available) in release_days:
+    for m, available in release_days:
         if today >= available:
             target = m
         else:
@@ -259,7 +255,7 @@ def get_target_report_month(today=None):
 
 
 def extract_pdf_links(page_url):
-    soup = BeautifulSoup(requests.get(page_url).text, "html.parser")
+    soup = BeautifulSoup(requests.get(page_url, timeout=10).text, "html.parser")
     rows = soup.select("table#tableId tbody tr")
 
     pdf_links = []
@@ -267,24 +263,27 @@ def extract_pdf_links(page_url):
         tds = row.find_all("td")
         if not tds:
             continue
-        last_td = tds[-1]
-        link = last_td.select_one("div.fileGoupBox li.ajasOpen5Btn a.i-download[href]")
+
+        link = tds[-1].select_one(
+            "div.fileGoupBox li.ajasOpen5Btn a.i-download[href]"
+        )
         if not link:
             continue
 
-        filename = link.get_text(strip=True)
-        pdf_url = urljoin(page_url, link["href"])
-        pdf_links.append({"filename": filename, "url": pdf_url})
-
+        pdf_links.append({
+            "filename": link.get_text(strip=True),
+            "url": urljoin(page_url, link["href"]),
+        })
     return pdf_links
 
 
-def should_download_today(page_url, today=None):
+def should_download_today(today=None):
+    today = today or datetime.today()
     month = get_target_report_month(today)
-    if month is None:
+    if not month:
         return None
 
-    pdfs = extract_pdf_links(page_url)
+    pdfs = extract_pdf_links(BOK_PAGE_URL)
     year = today.year
     expected_code = f"{year}-{month:02d}"
 
@@ -292,15 +291,14 @@ def should_download_today(page_url, today=None):
         if f"({year}.{month}월" in info["filename"]:
             return {
                 **info,
-                "code": expected_code
+                "code": expected_code,
             }
-
     return None
 
 
 def download_pdf(pdf_url, filename):
     path = f"/tmp/{filename}"
-    r = requests.get(pdf_url)
+    r = requests.get(pdf_url, timeout=10)
     r.raise_for_status()
     with open(path, "wb") as f:
         f.write(r.content)
@@ -312,79 +310,90 @@ def submit_batch(file_path):
         file=open(file_path, "rb"),
         purpose="batch",
     )
-
-    batch_job = client.batches.create(
+    return client.batches.create(
         input_file_id=batch_input.id,
         endpoint="/v1/chat/completions",
         completion_window="24h",
     )
-    return batch_job
+
+
+def exists_batch(code, type_):
+    resp = table.query(
+        KeyConditionExpression=Key("code_type").eq(f"{code}#{type_}")
+    )
+    return resp["Count"] > 0
 
 
 def save_batch_id(batch_id: str, code: str, type_: str):
-    item = {
-        "code_type": f"{code}#{type_}",
-        "code": code,
-        "type": type_,
-        "batch_id": batch_id,
-        "status": "pending",
-        "created_at": datetime.now().isoformat(),
+    table.put_item(
+        Item={
+            "code_type": f"{code}#{type_}",
+            "code": code,
+            "type": type_,
+            "batch_id": batch_id,
+            "status": "pending",
+            "created_at": datetime.utcnow().isoformat(),
+        }
+    )
+
+# ------------------------
+# 4. Core Job
+# ------------------------
+def run():
+    pdf_info = should_download_today()
+
+    if not pdf_info:
+        return {
+            "status": "NO_DATA",
+            "reason": "no pdf today",
+        }
+
+    if exists_batch(pdf_info["code"], "bok-issue"):
+        return {
+            "status": "NO_DATA",
+            "code": pdf_info["code"],
+            "reason": "already processed",
+        }
+
+    pdf_path = download_pdf(pdf_info["url"], pdf_info["filename"])
+
+    raw_text = extract_text(pdf_path)
+    paragraphs = extract_paragraphs(raw_text)
+
+    jsonl_path = create_batch_jsonl(paragraphs)
+    batch = submit_batch(jsonl_path)
+
+    save_batch_id(batch.id, pdf_info["code"], "bok-issue")
+
+    return {
+        "status": "SUCCESS",
+        "batch_id": batch.id,
+        "code": pdf_info["code"],
+        "paragraphs": len(paragraphs),
     }
-
-    table.put_item(Item=item)
-    return item
-
-
-# ------------------------
-# 4. Slack 메시지
-# ------------------------
-def send_slack_message(text: str):
-    webhook = os.environ["SLACK_WEBHOOK_URL"]
-    payload = {"text": text}
-
-    resp = requests.post(
-        webhook,
-        headers={"Content-Type": "application/json"},
-        data=json.dumps(payload),
-    )
-    print("[Slack] status:", resp.status_code)
-    print("[Slack] response:", resp.text)
-
-def exists_batch(code, type_):
-    code_type = f"{code}#{type_}"
-
-    resp = table.query(
-        KeyConditionExpression=Key("code_type").eq(code_type)
-    )
-
-    return resp["Count"] > 0
 
 # ------------------------
 # 5. Lambda Handler
 # ------------------------
 def lambda_handler(event, context):
-    BOK_PAGE_URL = os.environ["BOK_PAGE_URL"]
+    try:
+        result = run()
 
-    pdf_info = should_download_today(BOK_PAGE_URL, today=datetime.today())
-    if not pdf_info:
-        return {"message": "No PDF available today."}
-    if exists_batch(pdf_info["code"], "bok-issue"):
-        return {"message": "Already process."}
+        send_slack_message(
+            service="BOK | Issue Batch",
+            message=json.dumps(result, ensure_ascii=False),
+            status=result["status"],
+        )
 
-    pdf_path = download_pdf(pdf_info["url"], pdf_info["filename"])
+        return {
+            "statusCode": 200,
+            "body": json.dumps(result, ensure_ascii=False),
+        }
 
-    raw = extract_text(pdf_path)
-    paragraphs = extract_paragraphs(raw)
-    jsonl_path = create_batch_jsonl(paragraphs)
-
-    batch = submit_batch(jsonl_path)
-    save_batch_id(batch.id, pdf_info["code"], "bok-issue")
-
-    msg = f"📌 *OpenAI Batch Issue 요청 완료!*\n• Batch ID: `{batch.id}`"
-    send_slack_message(msg)
-
-    return {
-        "status": "submitted",
-        "batch_id": batch.id,
-        "paragraphs": len(paragraphs),
-    }
+    except Exception as e:
+        send_slack_message(
+            service="BOK | Issue Batch",
+            message=str(e),
+            status="ERROR",
+        )
+        raise
