@@ -18,6 +18,9 @@ Parameters:
   OpenAiKey:
     Type: String
     NoEcho: true
+  DataGoKrKey:
+    Type: String
+    NoEcho: true
   DdbTable:
     Type: String
     NoEcho: true
@@ -39,6 +42,7 @@ Globals:
         ECOS_API_KEY: !Ref EcosApiKey
         KRX_API_KEY: !Ref KrxApiKey
         OPENAI_API_KEY: !Ref OpenAiKey
+        DATA_GO_KR_API_KEY: !Ref DataGoKrKey
         DDB_TABLE: !Ref DdbTable
         SLACK_WEBHOOK_URL: !Ref SlackWebhookUrl
         LambdaRoleName: !Ref LambdaRoleName
@@ -557,7 +561,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: "cron(0 7 ? * THU *)"
-            Description: "매월 목요일 KST 16:00에 실행"
+            Description: "매주 목요일 KST 16:00에 실행"
   
   CollectMonetaryPolicyDecision:
     Type: AWS::Serverless::Function
@@ -577,7 +581,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: "cron(0 7 ? * THU *)"
-            Description: "매월 목요일 KST 16:00에 실행"
+            Description: "매주 목요일 KST 16:00에 실행"
 
   CollectMonetaryPolicyBatchOutput:
     Type: AWS::Serverless::Function
@@ -594,4 +598,74 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: "cron(0 8 ? * THU *)"
-            Description: "매월 목요일 KST 17:00에 실행"
+            Description: "매주 목요일 KST 17:00에 실행"
+  
+  CollectMolitAptTransaction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-molit-apt-transaction
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: molit/
+      Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: economins-raw
+          TRADE_TYPE: SELL
+          PUBLIC_API_URL: https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev
+      Timeout: 600
+      Events:
+        CollectMolitAptTransactionCurrentSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 8 3 * ? *)"
+            Description: "매월 3일 KST 17:00에 실행"
+            Input: '{"month_offset": 0}'
+        CollectMolitAptTransactionPrevSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(20 8 3 * ? *)"
+            Description: "매월 3일 KST 17:20에 실행"
+            Input: '{"month_offset": 1}'
+        CollectMolitAptTransactionPrev2Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(40 8 3 * ? *)"
+            Description: "매월 3일 KST 17:40에 실행"
+            Input: '{"month_offset": 2}'
+
+  CollectMolitAptRent:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-molit-apt-rent
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: molit/
+      Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: economins-raw
+          TRADE_TYPE: RENT
+          PUBLIC_API_URL: https://apis.data.go.kr/1613000/RTMSDataSvcAptRent/getRTMSDataSvcAptRent
+      Timeout: 600
+      Events:
+        CollectMolitAptRentCurrentSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 9 3 * ? *)"
+            Description: "매월 3일 KST 18:00에 실행"
+            Input: '{"month_offset": 0}'
+        CollectMolitAptRentPrevSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(20 9 3 * ? *)"
+            Description: "매월 3일 KST 18:20에 실행"
+            Input: '{"month_offset": 1}'
+        CollectMolitAptRentPrev2Schedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(40 9 3 * ? *)"
+            Description: "매월 3일 KST 18:40에 실행"
+            Input: '{"month_offset": 2}'
