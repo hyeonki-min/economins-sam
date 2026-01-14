@@ -129,23 +129,51 @@ def estimate_tokens(text: str) -> int:
 
 
 def decide_summary_lines(tokens: int) -> str:
-    if tokens < 1000:
-        return "3~4줄"
-    elif tokens < 2000:
-        return "5~6줄"
-    elif tokens < 3000:
-        return "6~8줄"
-    return "8~10줄"
+    if tokens < 2500:
+        return "3 ~ 6"
+    elif tokens < 5000:
+        return "6 ~ 8"
+    else:
+        return "8 ~ 10"
 
 
 def build_system_prompt(text: str):
     tokens = estimate_tokens(text)
     lines = decide_summary_lines(tokens)
     return f"""
-너는 경제 분석 전문가야. 
-다음 문단을 불필요한 문장이나 반복 표현은 제거하고 핵심 경제 흐름만 정리하여 핵심 내용을 {lines}로 요약해줘. 
-요약은 '핵심 문장 단위 문자열 리스트' 형태로 반환해야 해.
-또한 기준 금리 변동 여부를 제목으로 1줄로 작성해줘.
+당신은 경제 전문가이자 문서 편집자입니다.
+
+주어진 텍스트를 읽고 아래 구조의 JSON만 출력하세요.
+{{"title":"text","summary":["sentence"],"tooltip":{{"keyword":"description"}}}}
+
+규칙:
+- JSON 외 다른 텍스트 출력 금지
+- 정보 추가·해석 금지
+- 내부 추론 없이 바로 JSON 결과를 작성할 것
+- 조건을 완벽히 만족하지 못해도 반드시 JSON을 출력할 것
+
+title:
+- 기준 금리 변동 여부에 대한 헤드라인형 제목
+- 명사 중심, 간결한 한국어
+
+summary:
+- {lines}개의 완결된 문장
+- 중립적·분석적 한국어
+- 정책 판단, 국내·외 경제 여건, 위험 요인을 포괄
+
+tooltip:
+- 0~10개까지 유연하게 선택
+- summary에 실제로 등장한 경제 개념만 선택
+- 용어는 summary에 나온 표현 그대로 사용하되
+  괄호(), 기호, 수식어는 제거한 핵심 용어만 사용
+- 분석 방식이나 서술 구조를 나타내는 표현은 제외
+- 실질적인 경제 개념·지표·정책·경제 구조에 해당하는 용어만 선택
+- 설명은 경제적 의미를 담은 명사형 정의
+- 군더더기 설명 금지
+
+token handling:
+- 출력 길이가 토큰 제한을 초과할 가능성이 있으면, 툴팁 항목 수를 먼저 줄인다
+- 제목(title)과 요약(summary)은 항상 전체를 유지한다
 """
 
 def create_batch_jsonl(paragraph, output_file="/tmp/batch_input.jsonl"):
@@ -161,7 +189,7 @@ def create_batch_jsonl(paragraph, output_file="/tmp/batch_input.jsonl"):
                     {"role": "system", "content": prompt},
                     {"role": "user", "content": paragraph},
                 ],
-                "max_completion_tokens": 800,
+                "max_completion_tokens": 1000,
                 "temperature": 0,
                 "response_format": {
                     "type": "json_schema",
@@ -175,9 +203,11 @@ def create_batch_jsonl(paragraph, output_file="/tmp/batch_input.jsonl"):
                             },
                             "summary": {
                                 "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
+                                "items": { "type": "string" }
+                            },
+                            "tooltip": {
+                                "type": "object",
+                                "additionalProperties": { "type": "string" }
                             }
                         },
                         "required": ["title", "summary"],
@@ -192,14 +222,14 @@ def create_batch_jsonl(paragraph, output_file="/tmp/batch_input.jsonl"):
 
 
 PUBLISH_DATES = [
-    (1, 16),
-    (2, 25),
-    (4, 17),
-    (5, 29),
-    (7, 10),
-    (8, 28),
-    (10, 23),
-    (11, 27),
+    (1, 15),
+    (2, 26),
+    (4, 10),
+    (5, 28),
+    (7, 16),
+    (8, 27),
+    (10, 22),
+    (11, 26),
 ]
 
 
