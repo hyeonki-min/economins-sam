@@ -94,49 +94,16 @@ def save_to_s3(code: str, type_: str, results: list[dict]) -> str:
     return key
 
 
-# ---------------------------
-# 날짜 유틸
-# ---------------------------
-PUBLISH_DATES = [
-    (1, 16), (2, 25), (4, 17), (5, 29),
-    (7, 10), (8, 28), (10, 23), (11, 27),
-]
-
-def get_target_report_month(today=None):
+def get_latest_policy_code(today=None) -> str:
     today = today or datetime.today()
-    year = today.year
-
-    release_days = [(m, datetime(year, m, d)) for m, d in PUBLISH_DATES]
-    release_days.sort(key=lambda x: x[1])
-
-    target = None
-    for m, available in release_days:
-        if today >= available:
-            target = m
-        else:
-            break
-    return target
-
-
-def get_code(today=None) -> str | None:
-    today = today or datetime.today()
-    month = get_target_report_month(today)
-    if not month:
-        return None
-    return f"{today.year}-{month:02d}"
+    return f"{today.year}-{today.month:02d}"
 
 
 # ---------------------------
 # Core Job
 # ---------------------------
 def run():
-    code = get_code()
-
-    if not code:
-        return {
-            "status": "NO_DATA",
-            "reason": "no report month",
-        }
+    code = get_latest_policy_code()
 
     pending_jobs = fetch_pending_jobs(code)
 
