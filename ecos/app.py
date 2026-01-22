@@ -73,7 +73,7 @@ def transform_data(data: dict) -> list:
                 for m in range(month_end - 2, month_end):
                     result.append({"x": f"{year}-{m:02d}", "y": None})
 
-                value = round(float(item.get("DATA_VALUE", 0)), 1)
+                value = float(item.get("DATA_VALUE", 0))
                 result.append({"x": f"{year}-{month_end:02d}", "y": value})
 
             except Exception:
@@ -83,7 +83,7 @@ def transform_data(data: dict) -> list:
         else:
             try:
                 date_fmt = datetime.strptime(time_str, "%Y%m")
-                value = round(float(item.get("DATA_VALUE", 0)), 1)
+                value = float(item.get("DATA_VALUE", 0))
                 result.append(
                     {"x": date_fmt.strftime("%Y-%m"), "y": value}
                 )
