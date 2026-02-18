@@ -412,8 +412,7 @@ def lambda_handler(event, context):
 
         send_slack_message(
             service="BOK | Issue Batch",
-            message=json.dumps(result, ensure_ascii=False),
-            status=result["status"],
+            result=result,
         )
 
         return {

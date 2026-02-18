@@ -382,9 +382,9 @@ Resources:
       Environment:
         Variables:
           S3_OUTPUT_KEY: data/m2-korea.json
-          STAT_CODE: '101Y003'
+          STAT_CODE: '161Y006'
           CYCLE: 'M'
-          ITEM_CODE: 'BBHS00'
+          ITEM_CODE: 'BBHA00'
       Events:
         CollectM2KoreaSchedule:
           Type: Schedule

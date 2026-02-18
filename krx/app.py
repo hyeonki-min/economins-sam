@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import boto3
 from botocore.exceptions import ClientError
 import calendar
+import hashlib
 import json
 import os
 import time
@@ -80,6 +81,15 @@ def move_to_prev_month(now: datetime) -> datetime:
     return datetime(year, month, 1)
 
 
+def hash_list(data: list) -> str:
+    """
+    리스트 전체를 안정적으로 해시하기 위해
+    key 정렬 + UTF-8 인코딩 후 SHA256 적용
+    """
+    raw = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
 def run():
     existing = load_existing_data()
     if not isinstance(existing, list):
@@ -97,26 +107,61 @@ def run():
 
     ym, price = result
 
-    updated = False
-    for item in existing:
+    # -----------------------------
+    # 1️⃣ 새 리스트 생성
+    # -----------------------------
+    new_list = list(existing)
+
+    found = False
+    for item in new_list:
         if item["x"] == ym:
             item["y"] = price
-            updated = True
+            found = True
             break
 
-    if not updated:
-        existing.append({"x": ym, "y": price})
+    if not found:
+        new_list.append({"x": ym, "y": price})
 
-    existing.sort(key=lambda x: x["x"])
-    upload_json(existing)
+    new_list.sort(key=lambda x: x["x"])
+
+    # -----------------------------
+    # 2️⃣ 개수 감소 방지
+    # -----------------------------
+    old_count = len(existing)
+    new_count = len(new_list)
+
+    if new_count < old_count:
+        return {
+            "status": "SKIPPED_SHRINK",
+            "old_count": old_count,
+            "new_count": new_count,
+        }
+
+    # -----------------------------
+    # 3️⃣ 해시 비교
+    # -----------------------------
+    old_hash = hash_list(existing)
+    new_hash = hash_list(new_list)
+
+    if old_hash == new_hash:
+        return {
+            "status": "NO_CHANGE",
+            "count": old_count,
+            "hash": old_hash,
+        }
+
+    # -----------------------------
+    # 4️⃣ 변경 발생 시 업로드
+    # -----------------------------
+    upload_json(new_list)
 
     return {
         "status": "SUCCESS",
-        "ym": ym,
-        "price": price,
-        "updated": updated,
+        "old_count": old_count,
+        "new_count": new_count,
+        "old_hash": old_hash,
+        "new_hash": new_hash,
     }
-
 
 def lambda_handler(event, context):
     try:
@@ -124,8 +169,7 @@ def lambda_handler(event, context):
 
         send_slack_message(
             service=f"KRX | {OUTPUT_KEY}",
-            message=f"{result.get('ym')}: {result.get('price')}",
-            status=result["status"],
+            result=result,
         )
 
         return {

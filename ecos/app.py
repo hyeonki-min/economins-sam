@@ -1,4 +1,5 @@
 from common.slack import send_slack_message
+import hashlib
 import json
 import boto3
 import os
@@ -94,6 +95,14 @@ def transform_data(data: dict) -> list:
     return result
 
 
+def load_existing_data() -> list:
+    try:
+        r = s3.get_object(Bucket=BUCKET_NAME, Key=OUTPUT_KEY)
+        return json.loads(r["Body"].read())
+    except ClientError as e:
+        raise
+
+
 # === S3 Upload ===
 def upload_json(data: list):
     s3.put_object(
@@ -103,6 +112,11 @@ def upload_json(data: list):
         ContentType="application/json",
         CacheControl="max-age=3600",
     )
+
+
+def hash_list(data: list) -> str:
+    raw = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
 
 
 # === Core Job ===
@@ -122,11 +136,56 @@ def run():
             "count": 0,
         }
 
-    upload_json(transformed)
+    # -----------------------------
+    # 1️⃣ 기존 데이터 로드
+    # -----------------------------
+    existing = load_existing_data()
+    if not isinstance(existing, list):
+        raise RuntimeError("Existing data is not a list")
+
+    old_count = len(existing)
+    new_count = len(transformed)
+
+    # -----------------------------
+    # 2️⃣ 개수 감소 방지
+    # -----------------------------
+    if new_count < old_count:
+        return {
+            "status": "SKIPPED_SHRINK",
+            "old_count": old_count,
+            "new_count": new_count,
+        }
+
+    # -----------------------------
+    # 3️⃣ 정렬 (해시 일관성 확보)
+    # -----------------------------
+    existing_sorted = sorted(existing, key=lambda x: x["x"])
+    transformed_sorted = sorted(transformed, key=lambda x: x["x"])
+
+    old_hash = hash_list(existing_sorted)
+    new_hash = hash_list(transformed_sorted)
+
+    # -----------------------------
+    # 4️⃣ 동일 데이터면 skip
+    # -----------------------------
+    if old_hash == new_hash:
+        return {
+            "status": "NO_CHANGE",
+            "count": old_count,
+            "hash": old_hash,
+        }
+
+    # -----------------------------
+    # 5️⃣ 변경 발생 시 업로드
+    # -----------------------------
+    upload_json(transformed_sorted)
 
     return {
         "status": "SUCCESS",
-        "count": len(transformed),
+        "old_count": old_count,
+        "new_count": new_count,
+        "old_hash": old_hash,
+        "new_hash": new_hash,
     }
 
 
@@ -137,8 +196,7 @@ def lambda_handler(event, context):
 
         send_slack_message(
             service=f"ECOS | {OUTPUT_KEY}",
-            message=f"rows={result.get('count')}",
-            status=result["status"],
+            result=result,
         )
 
         return {

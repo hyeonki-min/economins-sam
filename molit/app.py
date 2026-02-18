@@ -282,51 +282,44 @@ def run(event: dict):
 # =========================
 # Lambda Handler
 # =========================
-
 def lambda_handler(event, context):
     try:
         result = run(event)
-        status = result["status"]
 
-        if status == "SUCCESS":
-            send_slack_message(
-                service=f"Molit | {TRADE_TYPE}",
-                message=f"성공\n deal_ymd:{result['deal_ymd']}\n 성공 {result['total']} / {result['total']}\n",
-                status="SUCCESS",
-            )
-        elif status == "PARTIAL_FAILURE":
-            send_slack_message(
-                service=f"Molit | {TRADE_TYPE}",
-                message=f"부분 실패\n deal_ymd:{result['deal_ymd']}\n 실패 {result['failed']} / {result['total']}\n",
-                status="SUCCESS",
-            )
-        else:
-            send_slack_message(
-                service=f"Molit | {TRADE_TYPE}",
-                message=f"실패\n deal_ymd:{result['deal_ymd']}\n 실패 {result['failed']} / {result['total']}\n",
-                status="SUCCESS",
-            )
+        send_slack_message(
+            service=f"Molit | {TRADE_TYPE}",
+            result=result,
+        )
+
         return {
             "statusCode": 200,
-            "body": json.dumps({"status": "SUCCESS"}, ensure_ascii=False),
+            "body": json.dumps({"status": result["status"]}, ensure_ascii=False),
         }
+
     except RateLimitDetected:
         send_slack_message(
             service=f"Molit | {TRADE_TYPE}",
-            message=f"429",
+            message="429 Rate Limit",
             status="ERROR",
         )
+
         return {
             "statusCode": 429,
             "body": json.dumps({"status": "RATE_LIMIT"}, ensure_ascii=False),
         }
+
     except Exception as e:
         send_slack_message(
             service=f"Molit | {TRADE_TYPE}",
             message=str(e),
             status="ERROR",
         )
+
         return {
             "statusCode": 500,
-            "body": json.dumps({"status": "ERROR", "message": str(e)}, ensure_ascii=False),
+            "body": json.dumps(
+                {"status": "ERROR", "message": str(e)},
+                ensure_ascii=False,
+            ),
         }
+
