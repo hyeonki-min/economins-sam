@@ -543,6 +543,46 @@ Resources:
             Schedule: cron(0 9 1,2,3 * ? *)
             Description: Trigger Lambda on 1,2,3 every month at 6PM KST
 
+  CollectWti:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-yahoo-wti
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: yahoo/
+      Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/oil.json
+          YAHOO_SYMBOL: CL=F
+      Events:
+        CollectWtiSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 9 3 * ? *)
+            Description: Trigger Lambda on 3 every month at 6PM KST
+
+  CollectGold:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-yahoo-gold
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: yahoo/
+      Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/gold.json
+          YAHOO_SYMBOL: GC=F
+      Events:
+        CollectGoldSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 9 3 * ? *)
+            Description: Trigger Lambda on 3 every month at 6PM KST
+
   CollectMonetaryPolicyIssue:
     Type: AWS::Serverless::Function
     Properties:
