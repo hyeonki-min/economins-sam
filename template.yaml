@@ -600,7 +600,7 @@ Resources:
         CollectMonetaryPolicyIssueSchedule:
           Type: Schedule
           Properties:
-            Schedule: "cron(0 7 ? * THU,FRI *)"
+            Schedule: "cron(0 5 ? * THU,FRI *)"
             Description: "매주 목,금요일 KST 14:00에 실행"
   
   CollectMonetaryPolicyDecision:
@@ -620,7 +620,7 @@ Resources:
         CollectMonetaryPolicyDecisionSchedule:
           Type: Schedule
           Properties:
-            Schedule: "cron(0 7 ? * THU,FRI *)"
+            Schedule: "cron(0 6 ? * THU,FRI *)"
             Description: "매주 목,금요일 KST 15:00에 실행"
 
   CollectMonetaryPolicyBatchOutput:
