@@ -503,6 +503,28 @@ Resources:
             Schedule: cron(0 9 2,9,16,23 * ? *)
             Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
 
+  CollectCyclicalComponentLeadingIndexKorea:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-ecos-cyclical-component-of-leading-index-korea
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: ecos/
+      Handler: app.lambda_handler
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          S3_OUTPUT_KEY: data/cyclical-component-of-leading-index-korea.json
+          STAT_CODE: '901Y067'
+          CYCLE: 'M'
+          ITEM_CODE: 'I16E'
+      Events:
+        CollectCyclicalComponentLeadingIndexKoreaSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 9 2,9,16,23 * ? *)
+            Description: Trigger Lambda on 2,9,16,23 every month at 6PM KST
+
   CollectKospi:
     Type: AWS::Serverless::Function
     Properties:
@@ -709,3 +731,22 @@ Resources:
             Schedule: "cron(40 9 3 * ? *)"
             Description: "매월 3일 KST 18:40에 실행"
             Input: '{"month_offset": 2}'
+  CollectNews:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: collect-news
+      Role: !Sub arn:aws:iam::${AccountId}:role/${LambdaRoleName}
+      CodeUri: news/
+      Handler: lambda_handler.lambda_handler
+      Layers:
+        - !Ref CommonLayer
+      Environment:
+        Variables:
+          S3_BUCKET_NAME: economins-news
+      Timeout: 600
+      Events:
+        CollectRssNewsSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0 0-12 * * ? *)"
+            Description: "매일 09:00 - 21:00 매 정각 실행"

@@ -1,0 +1,122 @@
+{
+  "version": "rss-sources-2026-06-18",
+  "description": "국내 주식/섹터/테마 뉴스 수집용 RSS source registry",
+  "sources": [
+    {
+      "source_id": "mk_economy",
+      "source_name": "매일경제 경제",
+      "publisher": "매일경제",
+      "rss_url": "https://www.mk.co.kr/rss/30100041/",
+      "category": "economy",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true
+    },
+    {
+      "source_id": "mk_stock",
+      "source_name": "매일경제 증권",
+      "publisher": "매일경제",
+      "rss_url": "https://www.mk.co.kr/rss/50200011/",
+      "category": "stock",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true
+    },
+    {
+      "source_id": "hankyung_finance",
+      "source_name": "한국경제 증권",
+      "publisher": "한국경제",
+      "rss_url": "https://www.hankyung.com/feed/finance",
+      "category": "stock",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true
+    },
+    {
+      "source_id": "hankyung_economy",
+      "source_name": "한국경제 경제",
+      "publisher": "한국경제",
+      "rss_url": "https://www.hankyung.com/feed/economy",
+      "category": "economy",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true
+    },
+    {
+      "source_id": "etnews_economy",
+      "source_name": "전자신문 경제",
+      "publisher": "전자신문",
+      "rss_url": "http://rss.etnews.com/02.xml",
+      "category": "economy",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true,
+      "note": "전자신문 RSS 목록 기준. 운영 시 health check 실패하면 disabled 처리"
+    },
+    {
+      "source_id": "etnews_finance",
+      "source_name": "전자신문 금융",
+      "publisher": "전자신문",
+      "rss_url": "http://rss.etnews.com/02027.xml",
+      "category": "finance",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true,
+      "note": "전자신문 RSS 목록 기준. 운영 시 health check 실패하면 disabled 처리"
+    },
+    {
+      "source_id": "yonhap_economy",
+      "source_name": "연합뉴스 경제",
+      "publisher": "연합뉴스",
+      "rss_url": "https://www.yna.co.kr/rss/economy.xml",
+      "category": "economy",
+      "source_group": "domestic_news",
+      "reliability_tier": "A",
+      "enabled": true
+    },
+    {
+      "source_id": "sedaily_economy",
+      "source_name": "서울경제 경제",
+      "publisher": "서울경제",
+      "rss_url": "https://www.sedaily.com/rss/economy",
+      "category": "economy",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true
+    },
+    {
+      "source_id": "sedaily_finance",
+      "source_name": "서울경제 증권",
+      "publisher": "서울경제",
+      "rss_url": "https://www.sedaily.com/rss/finance",
+      "category": "stock",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": true
+    },
+    {
+      "source_id": "chosunbiz_industry",
+      "source_name": "조선비즈 산업",
+      "publisher": "조선비즈",
+      "rss_url": null,
+      "section_url": "https://biz.chosun.com/industry/",
+      "category": "industry",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": false,
+      "disabled_reason": "공식 RSS URL 미확인. RSS collector에서는 제외"
+    },
+    {
+      "source_id": "chosunbiz_stock",
+      "source_name": "조선비즈 증권",
+      "publisher": "조선비즈",
+      "rss_url": null,
+      "section_url": "https://biz.chosun.com/stock/",
+      "category": "stock",
+      "source_group": "domestic_news",
+      "reliability_tier": "B",
+      "enabled": false,
+      "disabled_reason": "공식 RSS URL 미확인. RSS collector에서는 제외"
+    }
+  ]
+}
